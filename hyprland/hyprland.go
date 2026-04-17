@@ -31,3 +31,25 @@ func decodeMods(modmask uint) string {
 	}
 	return strings.Join(parts, " + ")
 }
+
+func formatKey(mods, key string) string {
+	if mods == "" {
+		return key
+	}
+	return mods + " + " + key
+}
+
+func resolveName(description, dispatcher, arg string) string {
+	if description != "" {
+		return description
+	}
+	if arg == "" {
+		return dispatcher
+	}
+	if dispatcher == "exec" {
+		// show only first word of command for readability
+		parts := strings.Fields(arg)
+		return "exec: " + parts[0]
+	}
+	return dispatcher + ": " + arg
+}
