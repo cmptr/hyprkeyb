@@ -1,6 +1,14 @@
 package hyprland
 
-import "strings"
+import (
+	"encoding/json"
+	"fmt"
+	"os/exec"
+	"sort"
+	"strings"
+
+	"github.com/kencx/keyb/config"
+)
 
 // X11 modifier bit masks
 const (
@@ -37,6 +45,73 @@ func formatKey(mods, key string) string {
 		return key
 	}
 	return mods + " + " + key
+}
+
+type hyprBind struct {
+	Modmask     uint   `json:"modmask"`
+	Key         string `json:"key"`
+	Dispatcher  string `json:"dispatcher"`
+	Arg         string `json:"arg"`
+	Description string `json:"description"`
+	Submap      string `json:"submap"`
+}
+
+// ParseBinds queries the running Hyprland compositor and returns its
+// keybinds as config.Apps grouped by submap.
+func ParseBinds() (config.Apps, error) {
+	out, err := exec.Command("hyprctl", "binds", "-j").Output()
+	if err != nil {
+		return nil, fmt.Errorf("hyprctl binds failed: %w", err)
+	}
+	return parseBindsFromJSON(out)
+}
+
+func parseBindsFromJSON(data []byte) (config.Apps, error) {
+	var binds []hyprBind
+	if err := json.Unmarshal(data, &binds); err != nil {
+		return nil, fmt.Errorf("failed to parse hyprctl output: %w", err)
+	}
+
+	groups := make(map[string][]config.KeyBind)
+	for _, b := range binds {
+		mods := decodeMods(b.Modmask)
+		key := formatKey(mods, b.Key)
+		name := resolveName(b.Description, b.Dispatcher, b.Arg)
+
+		section := sectionName(b.Submap)
+		groups[section] = append(groups[section], config.KeyBind{
+			Name: name,
+			Key:  key,
+		})
+	}
+
+	apps := make(config.Apps, 0, len(groups))
+	for section, keybinds := range groups {
+		apps = append(apps, &config.App{
+			Name:     section,
+			Keybinds: keybinds,
+		})
+	}
+
+	// "Hyprland" first, then submaps alphabetically
+	sort.Slice(apps, func(i, j int) bool {
+		if apps[i].Name == "Hyprland" {
+			return true
+		}
+		if apps[j].Name == "Hyprland" {
+			return false
+		}
+		return apps[i].Name < apps[j].Name
+	})
+
+	return apps, nil
+}
+
+func sectionName(submap string) string {
+	if submap == "" {
+		return "Hyprland"
+	}
+	return "Hyprland: " + submap
 }
 
 func resolveName(description, dispatcher, arg string) string {
