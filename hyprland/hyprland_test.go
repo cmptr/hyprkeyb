@@ -64,6 +64,7 @@ func TestResolveName(t *testing.T) {
 		{"open terminal", "exec", "ghostty", "open terminal"},
 		{"", "exec", "ghostty --class=x -e y", "exec: ghostty"},
 		{"", "exec", "", "exec"},
+		{"", "exec", "   ", "exec"},
 		{"", "togglefloating", "", "togglefloating"},
 		{"", "movefocus", "l", "movefocus: l"},
 		{"", "workspace", "1", "workspace: 1"},
