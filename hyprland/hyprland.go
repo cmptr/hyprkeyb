@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kencx/keyb/config"
+	"github.com/cmptr/hyprkeyb/config"
 )
 
 // X11 modifier bit masks

@@ -7,14 +7,14 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/kencx/keyb/config"
-	"github.com/kencx/keyb/hyprland"
-	"github.com/kencx/keyb/output"
-	"github.com/kencx/keyb/ui"
+	"github.com/cmptr/hyprkeyb/config"
+	"github.com/cmptr/hyprkeyb/hyprland"
+	"github.com/cmptr/hyprkeyb/output"
+	"github.com/cmptr/hyprkeyb/ui"
 )
 
 const (
-	help = `usage: keyb [options] <command>
+	help = `usage: hyprkeyb [options] <command>
 
   Options:
     -p, --print       Print to stdout
@@ -29,7 +29,7 @@ const (
     a, add            Add keybind to keyb file
 `
 
-	addHelp = `usage: keyb [-k file] add [app; name; key]
+	addHelp = `usage: hyprkeyb [-k file] add [app; name; key]
 
   Options:
     -k, --key      Key bindings file at custom path

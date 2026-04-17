@@ -1,8 +1,8 @@
 package list
 
 import (
-	"github.com/kencx/keyb/config"
-	"github.com/kencx/keyb/ui/table"
+	"github.com/cmptr/hyprkeyb/config"
+	"github.com/cmptr/hyprkeyb/ui/table"
 
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"

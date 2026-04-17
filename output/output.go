@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kencx/keyb/ui"
+	"github.com/cmptr/hyprkeyb/ui"
 	"gopkg.in/yaml.v2"
 )
 

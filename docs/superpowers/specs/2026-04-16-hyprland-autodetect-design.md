@@ -75,6 +75,8 @@ Standard X11 modifier bit values applied in display order:
 | 64  | Super    |
 | 128 | Mod5     |
 
+Unknown bits are silently ignored (not rendered). Tests must include a fixture with an unrecognized bit to document this behavior explicitly.
+
 Output format: `"Super + Shift + F"` (modifiers in the order above, then the key).
 
 ### Name resolution
@@ -117,7 +119,7 @@ Unit tests in `hyprland/hyprland_test.go` use a fixture JSON payload (no live `h
 
 At repo root. Provides `devShells.default` for `x86_64-linux` and `aarch64-linux`:
 
-- `go_1_26` — matches `go.mod` requirement
+- `go` — use `pkgs.go` (latest stable in nixpkgs); if a pinned attribute matching `go.mod`'s `go 1.26.1` exists (e.g., `go_1_26`), prefer it, otherwise `pkgs.go` is sufficient
 - `gopls` — language server
 - `gotools` — `goimports`, `godoc`
 - `golangci-lint` — matches CI linting
@@ -142,7 +144,7 @@ Placed at repo root. Activates the dev shell automatically when entering the dir
 3. Update `main.go`: add `-H` / `--hyprland` flag, call `hyprland.ParseBinds()`, merge results
 4. Create `flake.nix`
 5. Create `.envrc`
-6. Add descriptions to user's hyprland keybinds config (`~/.config/hypr/conf/keybinds.conf`) — annotate each bind with accurate `description` values so they appear in keyb instead of the `dispatcher: arg` fallback
+6. *(Post-implementation / personal config)* Add descriptions to the user's hyprland keybinds config (`~/.config/hypr/conf/keybinds.conf`) — annotate each bind with accurate `description` values so they appear in keyb instead of the `dispatcher: arg` fallback. This is outside the repo and done after the feature ships.
 
 ---
 

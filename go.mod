@@ -1,4 +1,4 @@
-module github.com/kencx/keyb
+module github.com/cmptr/hyprkeyb
 
 go 1.26.1
 

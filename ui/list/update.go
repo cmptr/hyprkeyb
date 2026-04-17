@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/kencx/keyb/ui/table"
+	"github.com/cmptr/hyprkeyb/ui/table"
 	"github.com/sahilm/fuzzy"
 )
 
