@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/kencx/keyb/config"
+	"github.com/cmptr/hyprkeyb/config"
 )
 
 type KeyMap struct {

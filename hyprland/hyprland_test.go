@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/kencx/keyb/config"
+	"github.com/cmptr/hyprkeyb/config"
 )
 
 func TestDecodeMods(t *testing.T) {

@@ -4,9 +4,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kencx/keyb/config"
-	"github.com/kencx/keyb/ui/list"
-	"github.com/kencx/keyb/ui/table"
+	"github.com/cmptr/hyprkeyb/config"
+	"github.com/cmptr/hyprkeyb/ui/list"
+	"github.com/cmptr/hyprkeyb/ui/table"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

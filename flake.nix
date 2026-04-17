@@ -1,5 +1,5 @@
 {
-  description = "keyb dev environment";
+  description = "hyprkeyb — Hyprland-aware keybind cheatsheet overlay";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
@@ -9,6 +9,20 @@
       forEachSystem = f: nixpkgs.lib.genAttrs systems
         (system: f nixpkgs.legacyPackages.${system});
     in {
+      packages = forEachSystem (pkgs: {
+        default = pkgs.buildGoModule {
+          pname = "hyprkeyb";
+          version = self.shortRev or "dev";
+          src = ./.;
+          vendorHash = "sha256-fQkYYrMC48NbDW0yqNuV1VAC0XbRIQad7Iy2/P8Yubw=";
+          ldflags = [ "-s" "-w" "-X main.version=${self.shortRev or "dev"}" ];
+          meta = {
+            description = "Hyprland-aware keybind cheatsheet overlay";
+            mainProgram = "hyprkeyb";
+          };
+        };
+      });
+
       devShells = forEachSystem (pkgs: {
         default = pkgs.mkShell {
           packages = [

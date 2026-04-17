@@ -3,8 +3,8 @@ package list
 import (
 	"testing"
 
-	"github.com/kencx/keyb/config"
-	"github.com/kencx/keyb/ui/table"
+	"github.com/cmptr/hyprkeyb/config"
+	"github.com/cmptr/hyprkeyb/ui/table"
 )
 
 var (
