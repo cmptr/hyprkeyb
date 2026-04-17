@@ -49,7 +49,10 @@ func resolveName(description, dispatcher, arg string) string {
 	if dispatcher == "exec" {
 		// show only first word of command for readability
 		parts := strings.Fields(arg)
-		return "exec: " + parts[0]
+		if len(parts) > 0 {
+			return "exec: " + parts[0]
+		}
+		return dispatcher
 	}
 	return dispatcher + ": " + arg
 }
