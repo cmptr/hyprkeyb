@@ -1,4 +1,13 @@
-# keyb
+# hyprkeyb
+
+> **Fork of [kencx/keyb](https://github.com/kencx/keyb) with Hyprland-specific additions.**
+>
+> **Changes from upstream:**
+> - `-H` / `--hyprland` flag: queries the running Hyprland compositor via `hyprctl binds -j` and merges all detected keybinds into the cheatsheet automatically
+> - Binds are grouped by submap (`Hyprland`, `Hyprland: resize`, etc.)
+> - Long `exec` dispatcher paths are shortened to the basename (e.g. `~/.local/share/scripts/foo.sh` → `exec: foo`)
+> - Nix flake (`flake.nix`) with a dev shell and a `packages.default` output for use as a nixpkgs source
+> - Binary and module renamed to `hyprkeyb`
 
 <p align="center">
 	<img width="660" src="https://github.com/kencx/keyb/blob/master/assets/compressed.gif?raw=true">
@@ -7,8 +16,7 @@
 <p align="center">Create and view your own custom hotkey cheatsheet in the terminal</p>
 
 <p align="center">
-	<img src="https://goreportcard.com/badge/github.com/kencx/keyb">
-	<img src="https://github.com/kencx/keyb/actions/workflows/test.yml/badge.svg?branch=master">
+	<img src="https://github.com/cmptr/hyprkeyb/actions/workflows/test.yml/badge.svg?branch=master">
 </p>
 
 ### Features
@@ -17,12 +25,7 @@
 - Fuzzy filtering
 - Vim key bindings
 - Export to stdout for fzf, rofi support
-
-### Non-Features
-keyb does **not** support:
-
-- Auto detection of hotkeys
-- Command selection
+- Auto-detection of Hyprland keybinds via `-H` flag
 
 ## Motivation
 
@@ -42,49 +45,56 @@ With keyb, I can list:
 It is best used as a popup cheatsheet.
 
 ## Install
-keyb supports Linux, MacOS and Windows.
 
 ### Compiled Binary
-Download a compiled binary from the [releases](https://github.com/kencx/keyb/releases) page.
+Download a compiled binary from the [releases](https://github.com/cmptr/hyprkeyb/releases) page.
 
-### Install with Go
+### Nix flake
 
-```bash
-$ go install github.com/kencx/keyb@latest
+```nix
+# flake.nix inputs
+hyprkeyb.url = "github:cmptr/hyprkeyb";
+hyprkeyb.inputs.nixpkgs.follows = "nixpkgs";
+
+# then in packages
+inputs.hyprkeyb.packages.${system}.default
 ```
-
-### AUR
-
-Packages can be found in the AUR:
-- [keyb-bin](https://aur.archlinux.org/packages/keyb-bin)
-- [keyb](https://aur.archlinux.org/packages/keyb)
-
-These are NOT maintained by me.
 
 ### Build from source
 
 ```bash
-$ git clone https://github.com/kencx/keyb
-$ cd keyb
+$ git clone https://github.com/cmptr/hyprkeyb
+$ cd hyprkeyb
 $ make build
 ```
 
 ## Usage
 
 ```text
-usage: keyb [options] <command>
+usage: hyprkeyb [options] <command>
 
 Options:
-  -p, --print     Print to stdout
-  -e, --export    Export to file [yaml, json]
-  -k, --key       Key bindings at custom path
-  -c, --config    Config file at custom path
-  -v, --version   Version info
-  -h, --help      help for keyb
+  -p, --print       Print to stdout
+  -e, --export      Export to file [yaml, json]
+  -k, --key         Key bindings at custom path
+  -c, --config      Config file at custom path
+  -H, --hyprland    Auto-detect Hyprland keybinds
+  -v, --version     Version info
+  -h, --help        Show help
 
 Commands:
-  a, add          Add keybind to keyb file
+  a, add            Add keybind to keyb file
 ```
+
+### Hyprland Auto-detection
+
+Pass `-H` to merge all keybinds from the running Hyprland session:
+
+```bash
+$ hyprkeyb -H
+```
+
+Binds are grouped by submap. `exec` dispatchers with path-based commands are shortened to the basename. If a bind has no description, the dispatcher and arg are used as the label.
 
 ### Search
 
@@ -98,11 +108,11 @@ respective rows.
 
 ### Printing
 
-keyb supports printing to stdout for use with other tools:
+hyprkeyb supports printing to stdout for use with other tools:
 
 ```bash
-$ keyb -p | fzf
-$ keyb -p | rofi -dmenu
+$ hyprkeyb -p | fzf
+$ hyprkeyb -p | rofi -dmenu
 ```
 
 ### keyb File
@@ -156,7 +166,7 @@ file` is given and exists, the new keybind will be appended to the file.
 Otherwise, `keyb_path` defined in `config.yml` will be used.
 
 ```bash
-$ keyb add -b "kitty; open terminal; super + enter"
+$ hyprkeyb add -b "kitty; open terminal; super + enter"
 ```
 
 When adding a new keybind, the app name, keybind name and keybind must be
@@ -184,7 +194,7 @@ If you're missing colors, a workaround is to add the environment variable `CLICO
 
 ## Contributing
 
-Contributing to keyb requires Go 1.26. Bug reports, feature requests and PRs are very welcome.
+Contributing to hyprkeyb requires Go 1.26. Bug reports and PRs welcome.
 
 ## Similar Tools
 
