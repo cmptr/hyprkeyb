@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -122,10 +123,14 @@ func resolveName(description, dispatcher, arg string) string {
 		return dispatcher
 	}
 	if dispatcher == "exec" {
-		// show only first word of command for readability
 		parts := strings.Fields(arg)
 		if len(parts) > 0 {
-			return "exec: " + parts[0]
+			cmd := parts[0]
+			if strings.Contains(cmd, "/") {
+				base := filepath.Base(cmd)
+				cmd = strings.TrimSuffix(base, filepath.Ext(base))
+			}
+			return "exec: " + cmd
 		}
 		return dispatcher
 	}
