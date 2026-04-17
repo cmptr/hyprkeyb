@@ -1,7 +1,10 @@
 package hyprland
 
 import (
+	"reflect"
 	"testing"
+
+	"github.com/kencx/keyb/config"
 )
 
 func TestDecodeMods(t *testing.T) {
@@ -78,5 +81,61 @@ func TestResolveName(t *testing.T) {
 					tt.desc, tt.disp, tt.arg, got, tt.want)
 			}
 		})
+	}
+}
+
+// fixture matches `hyprctl binds -j` structure
+const testFixture = `[
+  {
+    "locked": false, "mouse": false, "release": false, "repeat": false,
+    "longPress": false, "non_consuming": false, "has_description": false,
+    "modmask": 64, "submap": "", "submap_universal": "false",
+    "key": "Return", "keycode": 0, "catch_all": false,
+    "description": "", "dispatcher": "exec", "arg": "ghostty --title=term"
+  },
+  {
+    "locked": false, "mouse": false, "release": false, "repeat": false,
+    "longPress": false, "non_consuming": false, "has_description": true,
+    "modmask": 65, "submap": "", "submap_universal": "false",
+    "key": "Q", "keycode": 0, "catch_all": false,
+    "description": "close window", "dispatcher": "killactive", "arg": ""
+  },
+  {
+    "locked": false, "mouse": false, "release": false, "repeat": false,
+    "longPress": false, "non_consuming": false, "has_description": false,
+    "modmask": 64, "submap": "resize", "submap_universal": "false",
+    "key": "h", "keycode": 0, "catch_all": false,
+    "description": "", "dispatcher": "resizeactive", "arg": "-10 0"
+  }
+]`
+
+func TestParseBindsFromJSON(t *testing.T) {
+	apps, err := parseBindsFromJSON([]byte(testFixture))
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	if len(apps) != 2 {
+		t.Fatalf("expected 2 apps (Hyprland + Hyprland: resize), got %d", len(apps))
+	}
+
+	// "Hyprland" should be first
+	if apps[0].Name != "Hyprland" {
+		t.Errorf("first app name = %q, want %q", apps[0].Name, "Hyprland")
+	}
+	if len(apps[0].Keybinds) != 2 {
+		t.Errorf("Hyprland keybinds count = %d, want 2", len(apps[0].Keybinds))
+	}
+
+	// verify name resolution: description takes priority
+	wantBind := config.KeyBind{Name: "close window", Key: "Super + Shift + Q"}
+	got := apps[0].Keybinds[1]
+	if !reflect.DeepEqual(got, wantBind) {
+		t.Errorf("bind = %+v, want %+v", got, wantBind)
+	}
+
+	// "Hyprland: resize" submap section
+	if apps[1].Name != "Hyprland: resize" {
+		t.Errorf("second app name = %q, want %q", apps[1].Name, "Hyprland: resize")
 	}
 }
