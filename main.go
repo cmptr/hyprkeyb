@@ -8,6 +8,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/kencx/keyb/config"
+	"github.com/kencx/keyb/hyprland"
 	"github.com/kencx/keyb/output"
 	"github.com/kencx/keyb/ui"
 )
@@ -16,15 +17,16 @@ const (
 	help = `usage: keyb [options] <command>
 
   Options:
-    -p, --print	    Print to stdout
-    -e, --export    Export to file [yaml, json]
-    -k, --key       Key bindings at custom path
-    -c, --config    Config file at custom path
-    -v, --version   Version info
-    -h, --help	    Show help
+    -p, --print       Print to stdout
+    -e, --export      Export to file [yaml, json]
+    -k, --key         Key bindings at custom path
+    -c, --config      Config file at custom path
+    -H, --hyprland    Auto-detect Hyprland keybinds
+    -v, --version     Version info
+    -h, --help        Show help
 
   Commands:
-    a, add          Add keybind to keyb file
+    a, add            Add keybind to keyb file
 `
 
 	addHelp = `usage: keyb [-k file] add [app; name; key]
@@ -43,10 +45,11 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 
 	var (
-		stdout     bool
-		exportFile string
-		keybFile   string
-		configFile string
+		stdout        bool
+		exportFile    string
+		keybFile      string
+		configFile    string
+		hyprlandMode  bool
 
 		addBind   string
 		addPrefix bool
@@ -66,6 +69,9 @@ func main() {
 
 	flag.StringVar(&configFile, "c", "", "config file")
 	flag.StringVar(&configFile, "config", "", "config file")
+
+	flag.BoolVar(&hyprlandMode, "H", false, "auto-detect Hyprland keybinds")
+	flag.BoolVar(&hyprlandMode, "hyprland", false, "auto-detect Hyprland keybinds")
 
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	addCmd.StringVar(&addBind, "b", "", "keybind")
@@ -110,6 +116,14 @@ func main() {
 			fmt.Print(help)
 			os.Exit(1)
 		}
+	}
+
+	if hyprlandMode {
+		hyprKeys, err := hyprland.ParseBinds()
+		if err != nil {
+			log.Fatal(err)
+		}
+		keys = append(keys, hyprKeys...)
 	}
 
 	m := ui.NewModel(keys, cfg)
