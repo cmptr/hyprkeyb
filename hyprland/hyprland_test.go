@@ -71,6 +71,12 @@ func TestResolveName(t *testing.T) {
 		{"", "togglefloating", "", "togglefloating"},
 		{"", "movefocus", "l", "movefocus: l"},
 		{"", "workspace", "1", "workspace: 1"},
+		// path-based exec: basename without extension
+		{"", "exec", "~/.local/share/scripts/obsidian-quicknote.sh", "exec: obsidian-quicknote"},
+		{"", "exec", "~/.config/rofi/clipboard/launcher.sh", "exec: launcher"},
+		{"", "exec", "/usr/bin/firefox --new-window", "exec: firefox"},
+		// path with no extension left unchanged as basename
+		{"", "exec", "/usr/local/bin/mytool", "exec: mytool"},
 	}
 
 	for _, tt := range tests {
