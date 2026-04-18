@@ -77,6 +77,12 @@ color:
 	if c.CursorBg != "#89d6b9" {
 		t.Errorf("CursorBg: got %q", c.CursorBg)
 	}
+	if c.FilterFg != "#63dbb5" {
+		t.Errorf("FilterFg: got %q", c.FilterFg)
+	}
+	if c.BorderColor != "#344a52" {
+		t.Errorf("BorderColor: got %q", c.BorderColor)
+	}
 	if c.FilterBg != "" {
 		t.Errorf("FilterBg should be empty (not in file), got %q", c.FilterBg)
 	}
