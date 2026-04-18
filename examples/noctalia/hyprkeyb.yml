@@ -1,0 +1,9 @@
+color:
+  prompt: "{{colors.primary.default.hex}}"
+  filter_fg: "{{colors.primary.default.hex}}"
+  filter_bg: "{{colors.surface_container.default.hex}}"
+  cursor_fg: "{{colors.on_secondary.default.hex}}"
+  cursor_bg: "{{colors.secondary.default.hex}}"
+  counter_fg: "{{colors.tertiary.default.hex}}"
+  placeholder_fg: "{{colors.outline_variant.default.hex}}"
+  border_color: "{{colors.outline_variant.default.hex}}"
