@@ -132,6 +132,56 @@ var DefaultConfig = &Config{
 	},
 }
 
+func loadNoctaliaColors(basePath string) (Color, bool, error) {
+	path := filepath.Join(basePath, "noctalia-colors.yml")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return Color{}, false, nil
+		}
+		return Color{}, false, fmt.Errorf("failed to read noctalia colors: %w", err)
+	}
+	var cfg Config
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return Color{}, false, fmt.Errorf("failed to parse noctalia colors: %w", err)
+	}
+	return cfg.Color, true, nil
+}
+
+func mergeColor(base, override Color) Color {
+	if override.PromptColor != "" {
+		base.PromptColor = override.PromptColor
+	}
+	if override.CursorFg != "" {
+		base.CursorFg = override.CursorFg
+	}
+	if override.CursorBg != "" {
+		base.CursorBg = override.CursorBg
+	}
+	if override.FilterFg != "" {
+		base.FilterFg = override.FilterFg
+	}
+	if override.FilterBg != "" {
+		base.FilterBg = override.FilterBg
+	}
+	if override.CounterFg != "" {
+		base.CounterFg = override.CounterFg
+	}
+	if override.CounterBg != "" {
+		base.CounterBg = override.CounterBg
+	}
+	if override.PlaceholderFg != "" {
+		base.PlaceholderFg = override.PlaceholderFg
+	}
+	if override.PlaceholderBg != "" {
+		base.PlaceholderBg = override.PlaceholderBg
+	}
+	if override.BorderColor != "" {
+		base.BorderColor = override.BorderColor
+	}
+	return base
+}
+
 // Read configuration and keyb file from flags, default path.
 func Parse(flagCPath, flagKPath string) (Apps, *Config, error) {
 	xdgConfigDir, err := getXDGConfigDir()
@@ -148,6 +198,12 @@ func Parse(flagCPath, flagKPath string) (Apps, *Config, error) {
 	config, err := UnmarshalConfig(flagCPath, basePath)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if nc, ok, err := loadNoctaliaColors(basePath); err != nil {
+		return nil, nil, err
+	} else if ok {
+		config.Color = mergeColor(config.Color, nc)
 	}
 
 	if flagKPath == "" {
