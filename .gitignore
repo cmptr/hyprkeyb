@@ -8,5 +8,7 @@ testdata/keyb*
 !testdata/*.yml
 !testdata/*.yaml
 keyb
+hyprkeyb
 
 dist/
+.direnv/
