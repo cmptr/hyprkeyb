@@ -8,6 +8,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/cmptr/hyprkeyb/config"
+	"github.com/cmptr/hyprkeyb/ghostty"
 	"github.com/cmptr/hyprkeyb/hyprland"
 	"github.com/cmptr/hyprkeyb/output"
 	"github.com/cmptr/hyprkeyb/ui"
@@ -22,6 +23,7 @@ const (
     -k, --key         Key bindings at custom path
     -c, --config      Config file at custom path
     -H, --hyprland    Auto-detect Hyprland keybinds
+    -G, --ghostty     Auto-detect Ghostty keybinds
     -v, --version     Version info
     -h, --help        Show help
 
@@ -45,11 +47,12 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 
 	var (
-		stdout        bool
-		exportFile    string
-		keybFile      string
-		configFile    string
-		hyprlandMode  bool
+		stdout       bool
+		exportFile   string
+		keybFile     string
+		configFile   string
+		hyprlandMode bool
+		ghosttyMode  bool
 
 		addBind   string
 		addPrefix bool
@@ -72,6 +75,8 @@ func main() {
 
 	flag.BoolVar(&hyprlandMode, "H", false, "auto-detect Hyprland keybinds")
 	flag.BoolVar(&hyprlandMode, "hyprland", false, "auto-detect Hyprland keybinds")
+	flag.BoolVar(&ghosttyMode, "G", false, "auto-detect Ghostty keybinds")
+	flag.BoolVar(&ghosttyMode, "ghostty", false, "auto-detect Ghostty keybinds")
 
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	addCmd.StringVar(&addBind, "b", "", "keybind")
@@ -124,6 +129,14 @@ func main() {
 			log.Fatal(err)
 		}
 		keys = append(keys, hyprKeys...)
+	}
+
+	if ghosttyMode {
+		ghosttyKeys, err := ghostty.ParseBinds()
+		if err != nil {
+			log.Fatal(err)
+		}
+		keys = append(keys, ghosttyKeys...)
 	}
 
 	m := ui.NewModel(keys, cfg)
